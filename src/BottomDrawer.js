@@ -76,7 +76,7 @@ export default class BottomDrawer extends Component{
      */
     this.UP_POSITION = { 
       x: 0, 
-      y: SCREEN_HEIGHT - (this.props.containerHeight + this.props.offset) 
+      y: SCREEN_HEIGHT - (this.props.containerHeight + this.props.offset)
     };
     this.DOWN_POSITION = { 
       x: 0,
@@ -92,6 +92,13 @@ export default class BottomDrawer extends Component{
       onPanResponderMove: this._handlePanResponderMove,
       onPanResponderRelease: this._handlePanResponderRelease
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(this.props.openFloater, nextProps.openFloater)
+    if(nextProps.openFloater !== this.props.openFloater && nextProps.openFloater){
+      this.transitionTo(this.UP_POSITION);
+    }    
   }
 
   render() {   
@@ -127,8 +134,10 @@ export default class BottomDrawer extends Component{
     const { currentPosition } = this.state;
     if (gesture.dy > this.TOGGLE_THRESHOLD && currentPosition === this.UP_POSITION) {
       this.transitionTo(this.DOWN_POSITION);
+      if(!!this.props.checkSwipeStatus) this.props.checkSwipeStatus(false)
     } else if (gesture.dy < -this.TOGGLE_THRESHOLD && currentPosition === this.DOWN_POSITION) {
       this.transitionTo(this.UP_POSITION);
+      if(!!this.props.checkSwipeStatus) this.props.checkSwipeStatus(true)
     } else {
       this.resetPosition();
     }
